@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>京东轮播图</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .box{
+            width: 590px;
+            height: 470px;
+            margin: 30px auto;
+            position: relative;
+        }
+        ul,ol{
+            list-style: none;
+        }
+        ul>li{
+            position: absolute;
+            display: none;
+        }
+        span{
+            position: absolute;
+            width: 30px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            background-color: rgba(0,0,0,.4);
+            color: #fff;
+            font-size: 30px;
+            font-family: '黑体';
+            top: 50%;
+            margin-top: -30px;
+            cursor: pointer;
+        }
+        .prev{
+            left: 0;
+        }
+        .next{
+            right: 0;
+        }
+        span:hover{
+            background-color: rgba(0,0,0,.7);
+        }
+        ol{
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+        }
+        ol>li{
+            float: left;
+            height: 8px;
+            width: 8px;
+            border: 2px solid rgba(255,255,255,.5);
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+        .active{
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(255,255,255,.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <ul>
+        </ul>
+        <span class="prev">
+            <
+        </span>
+        <span class="next">
+            >
+        </span>
+        <ol>
+        </ol>
+    </div>
+</body>
+<script>
+    $(function () {
+        //动态添加数据
+        var data=[
+            'img/1.jpg',
+            'img/2.jpg',
+            'img/3.jpg',
+            'img/4.jpg',
+            'img/5.jpg'
+        ];
+        var ulLi='';
+        var olLi='';
+        for(var i=0;i<data.length;i++){
+            ulLi+='<li><img src="'+data[i]+'"></li>';
+            olLi+='<li></li>';
+        }
+        $('ul').html(ulLi);
+        $('ol').html(olLi);
+
+        $('ol li').eq(0).addClass('active');
+        $('ul li').eq(0).show();
+        var timer=null;
+        var index=0;
+        //轮播函数
+        function start() {
+            index=index>data.length-1?0:index;
+            index=index<0?data.length-1:index;
+            $('ol li').eq(index).addClass('active').siblings().removeClass('active');
+            $('ul li').eq(index).fadeIn().siblings().fadeOut();
+        }
+        //自动轮播
+        timer=setInterval(function () {
+            index++;
+            start();
+        },2000);
+        //绑定鼠标移入移出
+        $('.box').hover(function () {
+            clearInterval(timer);
+        },function () {
+            clearInterval(timer);
+            timer=setInterval(function () {
+                index++;
+                start();
+            },2000);
+        });
+        //上一个
+        $('.prev').on('click',function () {
+            clearInterval(timer);
+            index--;
+            start();
+        });
+        //下一个
+        $('.next').on('click',function () {
+            clearInterval(timer);
+            index++;
+            start();
+        });
+        $('ol li').on('mouseenter',function () {
+            clearInterval(timer);
+            index=$(this).index();
+            start();
+        })
+    })
+</script>
+</html>
